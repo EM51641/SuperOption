@@ -542,7 +542,7 @@ class GARCH_MODEL_AR_1:
     def GARCH_AR_1(self,s,d):
         
         returns=s.pct_change().dropna()*100
-        am = arch_model(returns,vol='Garch',rescale=False,p=1,q=1,o=1,dist='StudentsT',mean='AR', lags=1)
+        am = arch_model(returns,vol='Garch',rescale=False,p=1,q=1,o=0,dist='StudentsT',mean='AR', lags=1)#Here I preferred to use a student t distribution as it reflects better the real distribution of returns 
         res = am.fit(update_freq=5,disp='off')
         fitted = 0.1*np.sqrt(res.params['omega'] +res.params['alpha[1]'] *res.resid**2 +res.conditional_volatility**2 *res.params['beta[1]'])
         fitted = pd.DataFrame(fitted)
