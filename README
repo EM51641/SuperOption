@@ -3,7 +3,7 @@ Hi this is an application we created to price options(American as well as Europe
 Warning:This application is provided for general illustrative purposes only and does not constitute investment advice. 
 
 
-In order for the code to run correctly, you will need to install the following packages:
+In order for the application to run correctly, you will need to install the following packages:
 
 Numpy
 Pandas
