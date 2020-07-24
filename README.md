@@ -21,4 +21,4 @@ random,
 scipy.stats,
 mplfinance,
 request_html,
-openpyxl,
+openpyxl
