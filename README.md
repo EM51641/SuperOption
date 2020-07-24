@@ -5,21 +5,20 @@ Warning:This application is provided for general illustrative purposes only and 
 
 In order for the application to run correctly, you will need to install the following packages:
 
-Numpy
-Pandas
-Matplotlib
-Pandas_datareader
-Datetime
-time
-yahoo_fin
-yfinance
-ExcelWriter from pandas
-stock_info from yahoo_fin
-arch
-math
-random
-scipy.stats
-mplfinance
-request_html
-openpyxl
-
+Numpy,
+Pandas,
+Matplotlib,
+Pandas_datareader,
+Datetime,
+time,
+yahoo_fin,
+yfinance,
+ExcelWriter from pandas,
+stock_info from yahoo_fin,
+arch,
+math,
+random,
+scipy.stats,
+mplfinance,
+request_html,
+openpyxl,
