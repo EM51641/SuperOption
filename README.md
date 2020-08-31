@@ -23,6 +23,6 @@ mplfinance,
 request_html,
 openpyxl
 
-![alt text](https://github.com/EM51641/SuperOption/blob/master/APPCommands.png?raw=true,"Menu")
+![alt text](https://github.com/EM51641/SuperOption/blob/master/APPCommands.png?raw=true "Menu")
 
-![alt text](https://github.com/EM51641/SuperOption/blob/master/AAPL-VIZ.png?raw=true,"Stock Price Vizualizator")
+![alt text](https://github.com/EM51641/SuperOption/blob/master/AAPL-VIZ.png?raw=true "Stock Price Vizualizator")
