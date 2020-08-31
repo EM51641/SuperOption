@@ -2,6 +2,7 @@ Hi this is an application we created to price options(American as well as Europe
 
 Warning:This application is provided for general illustrative purposes only and does not constitute investment advice. 
 
+![alt text](https://github.com/EM51641/SuperOption/blob/master/APPCommands.png?raw=true)
 
 In order for the application to run correctly, you will need to install the following packages:
 
@@ -23,6 +24,5 @@ mplfinance,
 request_html,
 openpyxl
 
-![alt text](https://github.com/EM51641/SuperOption/blob/master/APPCommands.png?raw=true "Menu")
+![alt text](https://github.com/EM51641/SuperOption/blob/master/AAPL-VIZ.png?raw=true)
 
-![alt text](https://github.com/EM51641/SuperOption/blob/master/AAPL-VIZ.png?raw=true "Stock Price Vizualizator")
