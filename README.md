@@ -1,4 +1,4 @@
-Hi this is an application we created to price options(American as well as European), do technical charting on stocks and screen options based on thousands of stocks listed on the market.
+Do technical charting on stocks and screen options based on thousands of stocks listed on the market.
 
 Warning:This application is provided for general illustrative purposes only and does not constitute investment advice. 
 
