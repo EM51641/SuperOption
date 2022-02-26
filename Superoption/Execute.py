@@ -8,7 +8,8 @@ from Screeners.Screener_for_US_options import Screener_US
 from Technical_Analysis.technical_analysis import technical_chart
 from Rate_extractor.rate_extractor import rate_ext, yahoo_finance_dividend,invetment_grades,\
                                           stocklister, Option_writer
-from Mc_generator.generator import data_prep                                          
+from Mc_generator.generator import data_prep 
+from Users_Display.inputs import date_input, strike_input, dividend                                        
 import matplotlib.pyplot as plt 
 import pandas as pd
 import mplfinance as mpf
@@ -54,13 +55,9 @@ while True:
                 print('Retry and choose a Correct Ticker')
                 break
                 
-            print('Do you want to use the dividends yield or not(Y/N)?')
-            yn=input()
-            while yn!='Y' and yn!='N':
-                print('You can type Y or N')
-                yn=input()
+            yn = dividend()
                 
-            if yn=='Y':
+            if yn == 'yes':
                 try:
                     d_y = yahoo_finance_dividend(Ticker) 
                     
@@ -72,130 +69,47 @@ while True:
             else:
                 d_y=0
     
-            #try:
-                print("Enter your Strike Price (It's price today is {}),choose a rounded number:".format(round(data[-1],3)))
-                SPR=input()
-                
-                while SPR.isnumeric()!=True:
-                    print('Please insert only Numbers')
-                    SPR=input()
-                
-                while SPR.isnumeric()==True and round(float(SPR),0)<0:
-                    print('Select positive numbers')
-                    SPR=input()
-                    while SPR.isnumeric()!=True:
-                        print('Please insert only Numbers')
-                        SPR=input() 
-                        
-                SPR=round(float(SPR),0)
+            strike = strike_input(round(data[-1],3))
             
-                print('Expiration Date:')
-                print('input the year:(YYYY)')
-                year=input()
+            day, month, year = date_input()
+                          
+            m, horizon = OptionTools().compute_time_to_expiration(year,month,day)
+            returns = data.pct_change().dropna()
+            i_r = TNX[-1]/100
+            v = data_prep(data, horizon)[-1]
+            drift = returns.mean()*252-(1/2)*(v**2)
                 
-                while year.isnumeric()!=True:
-                    print('Please insert only Numbers')
-                    year=input()
-             
-                while year.isnumeric()==True and int(year)<today.year:
-                        print('Please insert a correct year,at least 2020 (YYYY)')
-                        year=(input())
-                        while year.isnumeric()!=True:
-                            print('Please insert only valid Numbers')
-                            year=input()
-                            
-                year=int(year)
-                
-                print('input the month:(MM)')
-                month=input()
-                
-                while month.isnumeric()!=True:
-                    print('Please insert only Numbers')
-                    month=input()
-             
-                while month.isnumeric()==True:
-                    if int(month)<today.month and year==today.year:
-                        print('Please insert a correct month')
-                        month=(input())
-                        while month.isnumeric()!=True:
-                            print('Please insert only valid Numbers')
-                            month=input()
-                            
-                    elif int(month)>12 or int(month)<1 :
-                        print('Please insert a correct month')
-                        month=(input())
-                        while month.isnumeric()!=True:
-                            print('Please insert only valid Numbers')
-                            month=input()
-                            
-                    else:
-                        month=int(month)
-                        break
-                
-                print('input the Day:(DD)')
-                day=input()
-                
-                while day.isnumeric()!=True:
-                    print('Please insert only Numbers')
-                    day=input()
+            if b == "P" and a == "NMC":
+                e_P = EuropeanPut(data[-1], v, strike, m, i_r,d_y)
+                print("The Price of the Option assuming a volatility of {}% ,a strike price of {}$ and an interest rate of {}% is :".format(round(v*100,1),strike,round(i_r*100,1)))
+                print('{}$'.format(round(e_P.price,2)))
                     
-                while day.isnumeric()==True:
-                    if int(day)<today.day and year==today.year and month==today.month:
-                        print('Please insert a correct day at least 1 day from now {}'.format(today.day+1))
-                        day=(input())
-                        while day.isnumeric()!=True:
-                            print('Please insert only valid Numbers')
-                            day=input()
-                            
-                    elif int(day)>30 or int(day)<1:
-                        print('Please insert a correct day number')
-                        day=(input())
-                        while month.isnumeric()!=True:
-                            print('Please insert only valid Numbers')
-                            day=input()
-                            
-                    else:
-                        day=int(day)
-                        break
-                        
-                print(year, day, month)    
-                m, horizon = OptionTools().compute_time_to_expiration((year),(month),(day))
-                returns = data.pct_change().dropna()
-                i_r = TNX[-1]/100
-                v = data_prep(data, horizon)[-1]
-                drift = returns.mean()*252-(1/2)*(v**2)
-                
-                if b == "P" and a == "NMC":
-                    e_P = EuropeanPut(data[-1], v, SPR, m, i_r,d_y)
-                    print("The Price of the Option assuming a volatility of {}% ,a strike price of {}$ and an interest rate of {}% is :".format(round(v*100,1),SPR,round(i_r*100,1)))
-                    print('{}$'.format(round(e_P.price,2)))
+            elif b == "C" and a == "NMC":
+                e_C=EuropeanCall(data[-1],v, strike, m, i_r,d_y)
+                print("The Price of the Option assuming a volatility of {}% ,a strike price of {}$ and an interest rate of {}% is :".format(round(v*100,1),strike,round(i_r*100,1)))
+                print('{}$'.format(round(e_C.price,2)))
                     
-                elif b == "C" and a == "NMC":
-                    e_C=EuropeanCall(data[-1],v, SPR, m, i_r,d_y)
-                    print("The Price of the Option assuming a volatility of {}% ,a strike price of {}$ and an interest rate of {}% is :".format(round(v*100,1),SPR,round(i_r*100,1)))
-                    print('{}$'.format(round(e_C.price,2)))
+            elif b == "C" and a == "MC":
+                result_set = OptionTools().simulate_calls(100, 1000, strike, data[-1], drift, 1/365, v, i_r,m,d_y)
+                OptionTools().aggregate_chart_option_simulation(result_set, True, True, True)
+                h = OptionTools().simulation_analysis(result_set)
+                k = OptionTools().probability_of_exercise_calls(result_set)
+                print("Average Price of the option: "+str(round(h[0],3))+'$')
+                print("Maximum Price of the option: "+str(round(h[1],3))+'$')
+                print("Initial Price of the option: "+str(round(h[2],3))+'$')
+                print("Minimal Price of the option: "+str(round(h[3],3))+'$')
+                print("Probability of exercice: "+str(k))
                     
-                elif b == "C" and a == "MC":
-                    result_set = OptionTools().simulate_calls(100, 1000, SPR, data[-1], drift, 1/365, v, i_r,m,d_y)
-                    OptionTools().aggregate_chart_option_simulation(result_set, True, True, True)
-                    h = OptionTools().simulation_analysis(result_set)
-                    k = OptionTools().probability_of_exercise_calls(result_set)
-                    print("Average Price of the option: "+str(round(h[0],3))+'$')
-                    print("Maximum Price of the option: "+str(round(h[1],3))+'$')
-                    print("Initial Price of the option: "+str(round(h[2],3))+'$')
-                    print("Minimal Price of the option: "+str(round(h[3],3))+'$')
-                    print("Probability of exercice: "+str(k))
-                    
-                elif b == "P" and a == "MC":
-                    result_set = OptionTools().simulate_puts(100, 1000, SPR, data[-1], drift, 1/365, v, i_r,m,d_y)
-                    OptionTools().aggregate_chart_option_simulation(result_set, True, True, True)
-                    h = OptionTools().simulation_analysis(result_set)
-                    k = OptionTools().probability_of_exercise_puts(result_set)
-                    print("Average Price of the option: "+str(round(h[0],3))+'$')
-                    print("Maximal Price of the option: "+str(round(h[1],3))+'$')
-                    print("Initial Price of the option: "+str(round(h[2],3))+'$')
-                    print("Minimal Price of the option: "+str(round(h[3],3))+'$')
-                    print("Probability of exercice: "+str(k))
+            elif b == "P" and a == "MC":
+                result_set = OptionTools().simulate_puts(100, 1000, strike, data[-1], drift, 1/365, v, i_r,m,d_y)
+                OptionTools().aggregate_chart_option_simulation(result_set, True, True, True)
+                h = OptionTools().simulation_analysis(result_set)
+                k = OptionTools().probability_of_exercise_puts(result_set)
+                print("Average Price of the option: "+str(round(h[0],3))+'$')
+                print("Maximal Price of the option: "+str(round(h[1],3))+'$')
+                print("Initial Price of the option: "+str(round(h[2],3))+'$')
+                print("Minimal Price of the option: "+str(round(h[3],3))+'$')
+                print("Probability of exercice: "+str(k))
                     
             #except:
             #    print('Error')
