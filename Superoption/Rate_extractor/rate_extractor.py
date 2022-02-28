@@ -1,17 +1,17 @@
 
 from pandas_datareader import data as wb
-import yahoo_fin.stock_info as si
+from yahoo_fin.stock_info import *
 from yahoo_fin.options import *
 import yfinance as yf
 from Grading_Function.Grading_Bank_System import Grading_Bank_Average
 
 def rate_ext(ticker, start_date = '2020-01-01'):
-    rate = wb.DataReader(ticker,data_source='yahoo',start = start_date)['Adj Close']
+    rate = get_data(ticker,data_source='yahoo',start = start_date)['Adj Close']
     return rate
 
-def yahoo_finance_dividend(ticker):
-    dividend_yield = yf.Ticker(ticker).info['dividendYield']
-    return dividend_yield
+def yahoo_finance_dividend(ticker, start_date = '2020-01-01'):
+    dividend = get_dividends(ticker,start_date = '2020-01-01')['dividend']
+    return dividend
 
 def invetment_grades(ticker, date):
     recommendations = yf.Ticker(ticker).recommendations['{}-01-01'.format(date):]
@@ -21,11 +21,11 @@ def invetment_grades(ticker, date):
 
 def stocklister(ticker = 'SP500'):
     if ticker=='NASDAQ':
-        stocklist=si.tickers_nasdaq()
+        stocklist= tickers_nasdaq()
     elif ticker=='DOW':
-        stocklist=si.tickers_dow()
+        stocklist= tickers_dow()
     else:
-        stocklist=si.tickers_sp500()
+        stocklist= tickers_sp500()
 
         return stocklist
 
@@ -37,3 +37,6 @@ def Option_writer(ticker):
     print('Thank you,files are registred under the names:')
     print('Calls{}.xlsx'.format(ticker))
     print('Puts{}.xlsx'.format(ticker))
+
+
+

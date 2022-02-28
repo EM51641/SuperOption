@@ -1,4 +1,6 @@
 from genericpath import exists
+
+from numpy import float16
 from Parsers.date_parser import date_parse, day_check, month_check, year_check
 from Rate_extractor.rate_extractor import rate_ext
 from datetime import date, datetime 
@@ -39,25 +41,27 @@ def date_definition_option(date, history):
 
 
 def strike_input(last_price):
-    print("Enter your Strike Price (It's price today is {}),choose a rounded number:\n".format(last_price) + 80*'=')
+    print("Enter your Strike Price (It's price today is {})\
+        , choose a rounded number:\n".format(last_price) + 80*'=')
     strike = input()
-    while strike_verifier(strike) != True:
+    while positive_digit_verifier(strike, False) != True:
         strike = input()
-    return int(strike)
+    return float(strike)
 
 
-def strike_verifier(strike):
+def digit_verifier(inpt, positive):
 
-    if set(strike).issubset(set(string.digits + '.')) is False:
+    if set(inpt).issubset(set(string.digits + '.')) is False:
         print('Please insert a float or an integer number: \n' + 80*'=')
         return False
 
-    if strike.count('.') > 1:
+    if inpt.count('.') > 1:
         print('Please insert only one . :\n' + 80*'=')
 
-    if int(strike) < 0:
-        print('Please insert a positive strike price: \n' + 80*'=')
-        return False
+    if positive :
+        if float(inpt) < 0:
+            print('Please insert a positive number: \n' + 80*'=')
+            return False
 
     return True 
 
@@ -83,8 +87,9 @@ def dividend_verifier(Answer):
 
 
 def How_to_evaluate_option():
+    print("Use a Monte-carlo (MC) simulation or a semi-closed formula (NMC)\
+         to simulate your option price?")
     Answer = str(input())
-    print("Use a Monte-carlo (MC) simulation or a semi-closed formula (NMC) to simulate your option price?")
     while How_to_evaluate_option_verifier(Answer) == False:
         Answer = str(input())
     return Answer
@@ -101,6 +106,7 @@ def How_to_evaluate_option_verifier(Answer):
     return Answer
 
 def What_option():
+    print('Put(type P) or a Call(type C)')
     Answer = str(input())
     while What_option_verifier(Answer) == False:
         Answer = str(input())
@@ -121,6 +127,60 @@ def Choose_ticker():
     print("Enter the ticker stock you choose :\n" + 80*'=')
     Ticker = str(input())
     return Ticker
+
+def Choose_volatility():
+    print("Enter your implied volatility \n".format(0) + 80*'=')
+    implied_vol = input()
+    while digit_verifier(implied_vol, True) == False:
+        implied_vol = input()
+    return float(implied_vol)
+
+#Heston
+def input_initial_vol():
+    print("Enter your initial volatility :\n".format(0) + 80*'=')
+    inital_vol = input()
+    while digit_verifier(inital_vol, True) == False:
+        inital_vol = input()
+    return float(inital_vol)
+
+def input_kappa():
+    print("Enter your kappa parameter :\n".format(0) + 80*'=')
+    kappa = input()
+    while digit_verifier(kappa, True) == False:
+        kappa = input()
+    return float(kappa)
+
+def input_theta():
+    print("Enter your theta parameter :\n".format(0) + 80*'=')
+    theta = input()
+    while digit_verifier(theta, True) == False:
+        theta = input()
+    return float(theta)
+
+#Heston+Jumps
+def add_lambda_():
+    print("Enter your lambda parameter :\n".format(0) + 80*'=')
+    lambda_ = input()
+    while digit_verifier(lambda_, True) == False:
+        lambda_ = input()
+    return float(lambda_)
+
+def add_mean_jump_size():
+    print("Enter your mean jump size parameter :\n".format(0) + 80*'=')
+    mean = input()
+    while digit_verifier(mean, False) == False:
+        mean = input()
+    return float(mean)
+
+def jump_volatility():
+    print("Enter your jump volatility parameter :\n".format(0) + 80*'=')
+    sigma = input()
+    while digit_verifier(sigma, True) == False:
+        sigma = input()
+    return float(sigma)
+
+
+
 
 
 

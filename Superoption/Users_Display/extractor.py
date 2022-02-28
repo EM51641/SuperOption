@@ -13,9 +13,13 @@ def data_extractor(include_dividend = True):
 
     if include_dividend == True:
         dividend = yahoo_finance_dividend(Ticker)
-    else:
-        dividend = 0 
+        dividend_yield = dividend / data[dividend.index]
 
-    return data, dividend
+    else:
+        dividend_yield = 0 
+
+    return data, dividend_yield
+
+
 
 
